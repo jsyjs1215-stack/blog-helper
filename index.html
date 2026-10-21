@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="app-version" content="1">
+<meta name="app-version" content="3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -89,6 +89,39 @@ textarea.in{min-height:96px;resize:vertical;line-height:1.5}
 .paper .ph{color:#888;background:#f2f4f8;border-radius:8px;padding:4px 8px;display:inline-block}
 .titleIn{font-size:18px;font-weight:700}
 .checks{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:12px;font-size:14px;line-height:1.8}
+.paper blockquote{quotes:none}
+.pg{margin-bottom:12px}.pg b{display:block;font-size:14px;margin-bottom:6px;color:var(--sub)}
+.pgr{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pgr button{position:relative;border:0;padding:0;border-radius:10px;overflow:hidden;aspect-ratio:4/3;cursor:pointer;background:#000}
+.pgr img{width:100%;height:100%;object-fit:cover}
+.pgr span{position:absolute;right:4px;bottom:4px;background:#000a;border-radius:8px;padding:2px 6px;font-size:13px}
+.prog{position:fixed;inset:0;z-index:45;display:none;flex-direction:column;overflow:auto;background:radial-gradient(circle at 50% 25%,#173a5a 0%,#0b1020 60%)}
+.prog.on{display:flex}
+.ptop{display:flex;justify-content:space-between;align-items:center;padding:calc(14px + env(safe-area-inset-top)) 16px 6px;max-width:640px;width:100%;margin:0 auto}
+.ptop button{border:0;background:none;color:var(--sub);font-size:26px;cursor:pointer}
+.ptop span{color:var(--sub);font-variant-numeric:tabular-nums}
+.pbody{max-width:640px;width:100%;margin:0 auto;padding:10px 16px calc(30px + env(safe-area-inset-bottom))}
+.ring{--p:0;width:230px;height:230px;margin:10px auto 22px;border-radius:50%;display:grid;place-items:center;
+  background:conic-gradient(#2dd4bf 0, #4f7cff calc(var(--p)*1%), #1e2a44 calc(var(--p)*1%));box-shadow:0 0 60px #2dd4bf33}
+.ring>div{width:194px;height:194px;border-radius:50%;background:#0d1730;display:grid;place-content:center;text-align:center}
+.ring .num{font-size:56px;font-weight:800;line-height:1}.ring .num small{font-size:24px;color:var(--sub)}
+.ring .lab{color:#a5b4fc;margin-top:8px;font-weight:600}
+.steps4{display:flex;align-items:center;margin:0 0 18px}
+.steps4 b{flex:1;height:3px;background:#26324d}
+.steps4 .st{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;color:var(--sub)}
+.steps4 .st i{font-style:normal;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:2px solid #334155;font-weight:700}
+.steps4 .st.done i{background:#2dd4bf;border-color:#2dd4bf;color:#04211d}
+.steps4 .st.now{color:#fff}.steps4 .st.now i{border-color:#4f7cff;box-shadow:0 0 0 5px #4f7cff33}
+.pcard{background:#111a2fcc;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+.pcard:empty{display:none}
+.pcard h3{margin:0 0 12px;font-size:19px;line-height:1.4}
+.ol{display:flex;gap:10px;align-items:center;margin:8px 0}
+.ol i{font-style:normal;width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#2dd4bf,#4f7cff);display:grid;place-items:center;font-size:13px;font-weight:700;flex:none}
+.olp{color:#5eead4;margin-top:10px;font-weight:600}
+.plog div{color:var(--sub);padding:4px 0}.plog div.on{color:#fff}.plog div.on::before{content:"● ";color:#2dd4bf}
+.ps{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:8px}
+.ps img{width:96px;height:68px;object-fit:cover;border-radius:10px;flex:none}
+.ps b{display:block;font-size:14px;line-height:1.35}.ps small{color:var(--sub);font-size:12px}
 .steps{display:grid;gap:10px;margin-top:14px}
 .steps .btn{text-align:left;padding:15px}
 .steps .btn small{display:block;color:var(--sub);font-weight:400;margin-top:3px}
@@ -151,6 +184,8 @@ a{color:#7aa2ff}
     <div class="hint">대충 한 줄만 적어도 돼요. 제목과 내용은 AI가 알아서 정해요.</div>
     <div class="row" style="justify-content:space-between;margin:18px 0 10px"><b>추천 주제</b><button class="btn s" onclick="suggestTopics()">✨ AI 추천 받기</button></div>
     <div class="chips" id="topicSug"></div>
+    <label class="l">글 분야</label>
+    <div class="chips" id="catChips"></div>
   </div>
 
   <div id="f-photo" style="display:none">
@@ -197,8 +232,12 @@ a{color:#7aa2ff}
   <div class="pickbox" onclick="openSheet()"><b id="writerName"></b><a>고르기 ›</a></div>
   <label class="l">길이</label>
   <div class="chips" id="lenChips"></div>
+  <label class="l">소제목마다 사진 <small>(Pexels 키가 있을 때)</small></label>
+  <div class="chips" id="perChips"></div>
+  <label class="l">글자 크기 <small>(소제목 · 본문)</small></label>
+  <div class="chips" id="sizeChips"></div>
 
-  <button class="big" onclick="generate()">✨ 글 만들기</button>
+  <button class="big" onclick="generate()">✨ 글쓰기 시작</button>
 
   <div class="res" id="result" style="display:none">
     <div class="sec">제목 <small style="color:var(--sub);font-weight:400">(눌러서 고르기)</small></div>
@@ -208,6 +247,11 @@ a{color:#7aa2ff}
     <div class="paper" id="paper" contenteditable="true"></div>
     <div class="hint">흰 종이 안을 눌러서 바로 고칠 수 있어요. 고친 내용도 자동 저장돼요.</div>
     <div class="checks" id="checks"></div>
+    <div id="photoBox">
+      <div class="row" style="justify-content:space-between;margin:26px 0 12px"><b style="font-size:19px">글에 들어간 사진</b><button class="btn s p" id="saveAllBtn" onclick="savePhotos()">💾 모두 저장</button></div>
+      <div id="photoStrip"></div>
+      <div class="hint">무료 사진 사이트 Pexels의 사진이라 출처 표시 없이 블로그에 써도 돼요. 마음에 안 드는 사진은 눌러서 다른 사진으로 바꾸세요.</div>
+    </div>
     <div class="sec">블로그에 올리기</div>
     <div class="steps">
       <button class="btn p" onclick="step1()">① 제목 복사 + 네이버 글쓰기 열기<small>열린 창의 제목 칸을 누르고 붙여넣기 하세요</small></button>
@@ -245,6 +289,11 @@ a{color:#7aa2ff}
   <button class="btn p" style="margin-top:12px" onclick="testKey()">키 저장하고 연결 확인</button>
   <div class="hint" id="modelInfo"></div>
 
+  <label class="l">Pexels 무료 사진 키 <small>(글에 사진 자동 넣기)</small></label>
+  <input class="in" id="sPexels" type="password" placeholder="Pexels에서 받은 키" autocomplete="off">
+  <div class="hint">키 받는 곳: <a href="https://www.pexels.com/api/" target="_blank" rel="noopener">pexels.com/api</a> → 무료 가입 → "Your API Key" 복사 → 여기에 붙여넣기</div>
+  <button class="btn p" style="margin-top:12px" onclick="testPexels()">사진 키 저장하고 확인</button>
+
   <label class="l">내 이름 <small>(첫 화면 인사용)</small></label>
   <input class="in" id="sName" placeholder="예: 소연">
   <label class="l">네이버 블로그 아이디</label>
@@ -277,20 +326,63 @@ a{color:#7aa2ff}
   <div class="row" style="justify-content:space-between;margin-bottom:14px"><b style="font-size:20px">글 스타일 고르기</b><button class="btn s" onclick="closeSheet()">✕</button></div>
   <div id="writerList"></div>
 </div></div>
+<div class="prog" id="prog">
+  <div class="ptop"><button onclick="progClose()">⌄</button><b id="progTitle">주제 글쓰기</b><span id="progTime">0:00</span></div>
+  <div class="pbody">
+    <div class="ring" id="progRing"><div><div class="num" id="progNum">0</div><div class="lab" id="progLabel">준비 중</div></div></div>
+    <div id="progRun">
+      <div class="steps4" id="progSteps"></div>
+      <div class="pcard" id="progOutline"></div>
+      <div class="pcard plog" id="progLog"></div>
+      <div class="hint" style="text-align:center">보통 30초~1분 걸려요. 이 화면을 닫지 말고 기다려 주세요.</div>
+      <button class="btn d" style="width:100%;margin-top:14px;padding:16px" onclick="progStop()">■ 멈추기</button>
+    </div>
+    <div id="progDone" style="display:none;text-align:center">
+      <h2 style="color:#5eead4;font-size:30px;margin:6px 0 14px">글 완성!</h2>
+      <div class="pcard" style="text-align:left"><b id="progDoneTitle"></b><div class="hint" id="progDoneInfo"></div></div>
+      <div class="steps" style="text-align:left">
+        <button class="btn p" onclick="step1()">① 제목 복사 + 네이버 글쓰기 열기<small>제목 칸에 붙여넣기 → 이 앱으로 돌아와 ②번</small></button>
+        <button class="btn p" onclick="step2()">② 본문 복사<small>본문 칸에 붙여넣기 → 임시저장 또는 발행</small></button>
+        <button class="btn" onclick="progToResult()">✏️ 글 확인·수정하기 / 사진 바꾸기</button>
+        <button class="btn" onclick="progAgain()">＋ 하나 더 쓰기</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div class="load" id="load"><div class="spin"></div><b id="loadMsg">글을 쓰고 있어요…</b><small style="color:var(--sub)" id="loadSec"></small></div>
 <div class="toast" id="toast"></div>
 
 <script>
 /* ===== 기본 데이터 ===== */
 const VERSION = document.querySelector('meta[name="app-version"]').content;
-const DEFAULT_STYLE = `- 부드러운 존댓말로 '~습니다'와 '~어요'를 자연스럽게 섞어 씁니다.
+const OLD_STYLES = [`- 부드러운 존댓말로 '~습니다'와 '~어요'를 자연스럽게 섞어 씁니다.
 - 이모지는 쓰지 않습니다.
 - 1인칭 경험담 위주로, 그때의 감정과 장면을 구체적으로 묘사합니다.
 - 도입부는 3~4문장으로 상황을 소개합니다.
 - 소제목은 4개 정도, 각 소제목 아래 3~4문장을 씁니다.
 - 마지막 소제목은 '마치며'로 하고, '이웃님들도 ~하시길 바라며'처럼 이웃에게 건네는 인사로 끝냅니다.
 - 가끔 괄호 속 짧은 혼잣말 같은 위트를 넣습니다. 예: (니맘 = 내맘)
-- 제목은 경험이 담긴 문장형으로 궁금증을 남깁니다. 예: 금요일 대신 월요일에 쉬었더니 찾아온 낯선 주중 풍경`;
+- 제목은 경험이 담긴 문장형으로 궁금증을 남깁니다. 예: 금요일 대신 월요일에 쉬었더니 찾아온 낯선 주중 풍경`, `- 친한 이웃에게 수다 떨듯 편안하고 말랑한 구어체로 써요.
+- 문장 끝은 '~했어요', '~더라고요', '~거든요', '~잖아요', '~네요', '~답니다'를 골고루 섞어요. '~습니다', '~하였다', '~것이다' 같은 딱딱한 말투는 거의 쓰지 않아요.
+- 문장은 짧게 끊어 쓰고, 속마음이나 감탄을 그대로 적어요. 예: "와, 이건 진짜 예상 못 했어요." "솔직히 좀 귀찮았거든요ㅎㅎ"
+- 중간중간 읽는 사람에게 말을 걸어요. 예: "여러분도 이런 적 있지 않으세요?"
+- 잘한 것만 쓰지 말고 실수담, 허둥댄 순간, 소소한 웃음 포인트도 솔직하게 넣어요.
+- 가끔 괄호 속 짧은 혼잣말을 넣어요. 예: (니맘 = 내맘) / (지갑아 미안해)
+- 'ㅎㅎ', '^^'는 글 전체에서 2~3번 정도만 가볍게 써요. 이모지는 쓰지 않아요.
+- 도입부는 3~4문장으로 "요즘 제가요~" 하듯 상황을 꺼내요.
+- 소제목은 4개 정도, 각 소제목 아래 3~5문장을 써요. 소제목도 딱딱한 명사형 말고 말하듯 써요. 예: "처음엔 진짜 막막했어요"
+- 마지막 소제목은 '마치며'로 하고, "이웃님들도 ~하시길 바라요!"처럼 따뜻한 인사로 끝내요.
+- 제목은 경험이 담긴 문장형으로 궁금증을 남겨요. 예: 금요일 대신 월요일에 쉬었더니 찾아온 낯선 주중 풍경`];
+const DEFAULT_STYLE = `- 실제로 해 본 사람이 이웃에게 차근차근 들려주는 친근한 정보형 경험담으로 써요.
+- 문장 끝은 '~어요', '~지요', '~답니다', '~더군요'를 번갈아 써요. '~습니다'체와 'ㅎㅎ', 이모지, 감탄사 남발은 쓰지 않아요.
+- 도입부는 딱 2문장이에요. 첫 문장은 이 글의 핵심 결론(읽으면 무엇을 알 수 있는지)을 먼저 말하고, 두 번째 문장은 처음의 걱정과 해 보고 난 느낌을 덧붙여요.
+- '마치며'를 뺀 소제목은 5개예요. 흐름은 ① 시작하게 된 계기·도전 → ② 실제로 해 본 과정 → ③ 겪은 어려움과 해결 방법 → ④ 결과와 달라진 점 → ⑤ '~할 때 기억할 점' 같은 주의사항·팁이에요.
+- 소제목은 15자 안팎의 짧은 명사구로 써요. 예: "코드 한 줄 모르는 강사의 무모한 도전", "오류 메시지 앞에서도 좌절하지 않는 비결"
+- 각 소제목 아래는 딱 3문장이고, 한 문장은 50~90자 정도로 길고 구체적으로 써요. 상황 → 구체적인 행동이나 장면 → 그때의 느낌 순서로요.
+- 실제 도구 이름, 기능 이름, 눈에 그려지는 장면(버튼 색 바꾸기, 오류 메시지를 복사해 붙여넣기 등)을 넣어 직접 해 본 티가 나게 써요.
+- '마치며'는 1~2문장으로, 이번 경험이 나에게 준 의미로 마무리해요.
+- 제목은 '핵심 키워드 + 나의 상황 + 후기/생존기/과정' 형태로 써요. 예: 컴맹 강사의 Claude 코딩 생존기 직접 겪은 현실적인 후기`;
+const CATS_TOPIC = ['자동','IT/디지털','일상','육아·교육','맛집·카페','여행','리뷰','건강·운동','재테크·정보'];
 
 const MOODS = {
  '기본형':'무난하고 읽기 편하게','일상형':'일기처럼 편안한 일상 기록','후기형':'직접 겪은 솔직한 후기','정보형':'핵심 정보를 알차게 정리',
@@ -317,7 +409,8 @@ const LS = {
   get(k,d){ try{ const v=JSON.parse(localStorage.getItem(k)); return v==null?d:v; }catch(e){ return d; } },
   set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ toast('저장 공간이 부족해요. 보관함의 오래된 글을 지워주세요.'); return false; } }
 };
-let S = Object.assign({key:'',name:'',blogId:'jsyjs1215',style:DEFAULT_STYLE,sample:'',mood:'기본형',writer:'내 블로그 스타일',len:1500,models:null,modelsAt:0}, LS.get('bh_settings',{}));
+let S = Object.assign({key:'',pexels:'',name:'',blogId:'jsyjs1215',style:DEFAULT_STYLE,sample:'',mood:'기본형',writer:'내 블로그 스타일',len:1500,cat:'자동',hSize:24,bSize:16,perSec:3,models:null,modelsAt:0}, LS.get('bh_settings',{}));
+if(OLD_STYLES.includes(S.style)) S.style = DEFAULT_STYLE;  // 예전 기본 말투를 그대로 쓰던 경우만 새 말투로
 let POSTS = LS.get('bh_posts',[]);
 let KWS = LS.get('bh_keywords',[]);
 let TOPICS = LS.get('bh_topics',[]);
@@ -375,6 +468,9 @@ function renderChoices(){
   $('#lenChips').innerHTML = LENS.map(n=>`<button class="chip ${n===S.len?'on':''}" onclick="S.len=${n};saveS();renderChoices()">${n.toLocaleString()}자</button>`).join('');
   $('#rvCat').innerHTML = CATS.map(k=>`<button class="chip ${k===rvCat?'on':''}" onclick="rvCat='${k}';renderChoices()">${k}</button>`).join('');
   $('#writerName').textContent = S.writer;
+  $('#catChips').innerHTML = CATS_TOPIC.map(k=>`<button class="chip ${k===S.cat?'on':''}" onclick="S.cat='${k}';saveS();renderChoices()">${k}</button>`).join('');
+  $('#perChips').innerHTML = [0,1,2,3].map(n=>`<button class="chip ${n===S.perSec?'on':''}" onclick="S.perSec=${n};saveS();renderChoices()">${n?n+'장':'안 넣기'}</button>`).join('');
+  $('#sizeChips').innerHTML = [[19,15,'작게'],[24,16,'보통'],[28,18,'크게']].map(([h,b,t])=>`<button class="chip ${h===S.hSize&&b===S.bSize?'on':''}" onclick="S.hSize=${h};S.bSize=${b};saveS();renderChoices()">${t} ${h}·${b}</button>`).join('');
 }
 function pickMood(k){ S.mood=k; saveS(); renderChoices(); }
 function openSheet(){
@@ -470,8 +566,8 @@ async function gemini(parts, schema, system){
   for(const m of await modelCandidates()){
     let r;
     try{ r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${encodeURIComponent(S.key)}`,
-      {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); }
-    catch(e){ throw new Error('인터넷 연결을 확인해 주세요.'); }
+      {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:abortCtl?abortCtl.signal:undefined}); }
+    catch(e){ if(e.name==='AbortError') throw e; throw new Error('인터넷 연결을 확인해 주세요.'); }
     const j = await r.json().catch(()=>({}));
     if(r.ok){
       const c = (j.candidates||[])[0];
@@ -489,41 +585,43 @@ async function gemini(parts, schema, system){
   throw lastErr || new Error('알 수 없는 오류');
 }
 
-/* ===== 글 만들기 ===== */
-const POST_SCHEMA = {type:'OBJECT',properties:{
+/* ===== 글 만들기 (뼈대 → 본문 → 사진 → 완성, 4단계) ===== */
+const OUTLINE_SCHEMA = {type:'OBJECT',properties:{
   titles:{type:'ARRAY',items:{type:'STRING'}},
   keyword:{type:'STRING'},
-  intro:{type:'ARRAY',items:{type:'STRING'}},
-  sections:{type:'ARRAY',items:{type:'OBJECT',properties:{heading:{type:'STRING'},sentences:{type:'ARRAY',items:{type:'STRING'}}},required:['heading','sentences']}},
-  closingHeading:{type:'STRING'},
-  closing:{type:'ARRAY',items:{type:'STRING'}},
+  coverQuery:{type:'STRING'},
+  headings:{type:'ARRAY',items:{type:'OBJECT',properties:{heading:{type:'STRING'},point:{type:'STRING'},photoQuery:{type:'STRING'}},required:['heading','point','photoQuery']}},
   tags:{type:'ARRAY',items:{type:'STRING'}}
-},required:['titles','keyword','intro','sections','closingHeading','closing','tags']};
+},required:['titles','keyword','coverQuery','headings','tags']};
+const BODY_SCHEMA = {type:'OBJECT',properties:{
+  intro:{type:'ARRAY',items:{type:'STRING'}},
+  sections:{type:'ARRAY',items:{type:'OBJECT',properties:{sentences:{type:'ARRAY',items:{type:'STRING'}}},required:['sentences']}},
+  closing:{type:'ARRAY',items:{type:'STRING'}}
+},required:['intro','sections','closing']};
 
 function systemPrompt(){
   const writer = S.writer==='내 블로그 스타일' ? `[내 블로그 말투 규칙]\n${S.style}` + (S.sample.trim()?`\n\n[내가 실제로 쓴 글 예시 - 이 말투와 호흡을 따라 쓰되 내용은 베끼지 말 것]\n${S.sample.trim().slice(0,4000)}`:'')
-    : `[작가 스타일] ${S.writer}: ${WRITERS[S.writer]}\n(말투는 부드러운 존댓말)`;
-  return `당신은 네이버 블로그 글을 대신 써 주는 전문 작가입니다. 블로그 주인 본인이 쓴 것처럼 1인칭으로 자연스럽게 씁니다.
+    : `[작가 스타일] ${S.writer}: ${WRITERS[S.writer]}\n(끝맺음은 '~어요', '~지요', '~답니다'를 번갈아 쓰는 부드러운 존댓말)`;
+  return `당신은 네이버 블로그 글을 대신 써 주는 전문 작가입니다. 블로그 주인 본인이 직접 겪고 쓴 것처럼 1인칭으로 씁니다.
 
 ${writer}
 
 [공통 규칙]
-- 한국어로 씁니다. 마크다운 기호(#, *, -, **)는 절대 쓰지 않습니다.
-- sentences, intro, closing 배열의 각 항목은 딱 한 문장입니다. (블로그에서 한 문장씩 띄어 쓰기 위함)
+- 한국어로 씁니다. 마크다운 기호(#, *, -, **)와 이모지는 쓰지 않습니다.
+- sentences, intro, closing 배열의 각 항목은 딱 한 문장입니다.
 - 네이버 검색에 잘 걸리도록 핵심 키워드를 제목 앞쪽, 도입부 첫 문장, 소제목 1~2개에 자연스럽게 넣습니다. 억지 반복은 하지 않습니다.
-- titles는 서로 다른 느낌의 제목 후보 3개, 각 35자 이내.
-- keyword는 사람들이 실제로 네이버에 검색할 만한 핵심 키워드 1개(2~4단어).
-- tags는 # 없이 태그 8~10개.
-- 확인되지 않은 가격, 영업시간, 통계 수치를 지어내지 않습니다. 모르는 정보는 구체적 숫자 없이 표현합니다.
+- 보고서체·번역투를 피합니다. "~할 수 있습니다", "~것입니다", "~에 대해 알아보겠습니다", "결론적으로" 같은 표현은 쓰지 않습니다.
+- 실제 해 본 사람처럼 구체적인 도구 이름, 기능 이름, 눈에 그려지는 장면을 넣습니다.
+- 확인되지 않은 가격, 영업시간, 통계 수치를 지어내지 않습니다.
 - 사진 자리를 넣으라고 하면 "[사진1]"처럼 그 표시만 있는 문장 항목을 따로 넣습니다.`;
 }
-function userPrompt(photoN){
+function taskPrompt(photoN){
   const L = mode==='review' ? Math.max(S.len, Math.round((+$('#rvMin').value||0)*1.15)) : S.len;
-  const common = `\n\n분위기: ${S.mood} (${MOODS[S.mood]})\n분량: 제목을 뺀 본문이 공백 포함 약 ${L}자. 소제목 수와 문장 수를 분량에 맞게 조절하세요.`;
-  const photoRule = photoN ? `\n\n첨부한 사진 ${photoN}장이 순서대로 사진1~사진${photoN}입니다. 사진 속 장면을 실제로 보고 구체적으로 묘사하세요. 모든 사진을 순서대로 한 번씩 [사진N] 문장 항목으로 본문 흐름에 맞게 배치하세요.` : '';
-  if(mode==='topic') return `다음 주제로 블로그 글을 써 주세요.\n주제: ${$('#topicIn').value.trim()}\n주제가 짧거나 대충 적혀 있어도 의도를 짐작해 구체적인 경험과 정보가 담긴 풍성한 글로 만들어 주세요.`+common;
-  if(mode==='photo') return `첨부한 사진으로 블로그 글을 써 주세요.\n어떤 글: ${$('#phWhat').value.trim()||'사진 속 내용을 보고 판단'}\n메모: ${$('#phMemo').value.trim()||'없음'}`+photoRule+common;
-  return `체험단(협찬) 후기 글을 써 주세요.
+  const common = `\n\n분위기: ${S.mood} (${MOODS[S.mood]})${S.cat&&S.cat!=='자동'?`\n글 분야: ${S.cat}`:''}\n분량: 제목을 뺀 본문이 공백 포함 약 ${L}자.`;
+  const photoRule = photoN ? `\n\n첨부한 사진 ${photoN}장이 순서대로 사진1~사진${photoN}입니다. 사진 속 장면을 실제로 보고 구체적으로 묘사하세요.` : '';
+  if(mode==='topic') return `주제: ${$('#topicIn').value.trim()}\n주제가 짧거나 대충 적혀 있어도 의도를 짐작해 구체적인 경험과 정보가 담긴 풍성한 글로 만들어 주세요.`+common;
+  if(mode==='photo') return `사진 후기 글입니다.\n어떤 글: ${$('#phWhat').value.trim()||'사진 속 내용을 보고 판단'}\n메모: ${$('#phMemo').value.trim()||'없음'}`+photoRule+common;
+  return `체험단(협찬) 후기 글입니다.
 업체·제품: ${$('#rvName').value.trim()}
 분야: ${rvCat}
 위치·구매처: ${$('#rvPlace').value.trim()||'없음'}
@@ -531,8 +629,61 @@ function userPrompt(photoN){
 필수 키워드(본문에 각각 2회 이상, 하나는 제목에도): ${$('#rvKw').value.trim()||'없음'}
 꼭 넣을 내용·장점: ${$('#rvPoint').value.trim()||'없음'}
 아쉬운 점(솔직하게 한 번 언급): ${$('#rvCons').value.trim()||'없음'}
-공정위 문구는 프로그램이 자동으로 넣으니 본문에 쓰지 마세요. 과장 광고처럼 보이지 않게, 실제 경험한 사람의 솔직한 후기 톤으로 쓰세요.`+photoRule+common;
+공정위 문구는 프로그램이 자동으로 넣으니 본문에 쓰지 마세요. 과장 광고처럼 보이지 않게 솔직한 후기 톤으로 쓰세요.`+photoRule+common;
 }
+const OUTLINE_ASK = `\n\n[지금 할 일: 글의 뼈대만 만들기]
+- titles: 서로 다른 느낌의 제목 후보 3개 (각 35자 이내, 핵심 키워드를 앞쪽에)
+- keyword: 사람들이 실제로 네이버에 검색할 핵심 키워드 1개 (2~4단어)
+- headings: '마치며'를 뺀 소제목들. 말투 규칙에 정한 개수를 따르고, 없으면 4~5개. point는 그 소제목에서 다룰 내용 한 줄.
+- coverQuery, photoQuery: 그 부분에 딱 맞는 무료 사진을 찾을 영어 검색어 (2~4단어, 눈에 보이는 구체적 장면, 소제목마다 다른 장면). 예: "woman typing laptop cafe"
+- tags: # 없이 태그 8~10개`;
+function bodyAsk(o, extra){
+  return `\n\n[지금 할 일: 아래 뼈대대로 본문 쓰기]
+제목: ${o.titles[0]}
+${o.headings.map((h,i)=>`소제목${i+1}: ${h.heading} — ${h.point}`).join('\n')}
+마지막: 마치며
+- intro: 도입부 문장들
+- sections: 위 소제목 순서대로 ${o.headings.length}개, 각 소제목 아래 문장들 (소제목 글자는 다시 쓰지 말 것)
+- closing: '마치며' 아래 문장들${extra||''}`;
+}
+
+/* --- 진행 화면 --- */
+let abortCtl=null, progT=null, progPct=0, progTarget=0, progT0=0;
+const STEP_NAMES=['원고','이미지','정리','완성'];
+function progOpen(){
+  progPct=0; progTarget=4; progT0=Date.now();
+  $('#prog').classList.add('on'); $('#progDone').style.display='none'; $('#progRun').style.display='';
+  $('#progTitle').textContent = MODE_NAME[mode]+' 글쓰기';
+  $('#progOutline').innerHTML=''; $('#progLog').innerHTML='';
+  clearInterval(progT);
+  progT=setInterval(()=>{
+    progPct += Math.max(0.05,(progTarget-progPct)*0.04);
+    if(progPct>progTarget) progPct=progTarget;
+    const p=Math.min(99.9,progPct);
+    $('#progRing').style.setProperty('--p',p);
+    $('#progNum').innerHTML = Math.floor(p)+'<small>.'+Math.floor(p*10)%10+'%</small>';
+    const s=Math.round((Date.now()-progT0)/1000); $('#progTime').textContent = Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  },100);
+}
+function progStep(n,label,target,log){
+  progTarget=target; $('#progLabel').textContent=label;
+  $('#progSteps').innerHTML = STEP_NAMES.map((t,i)=>`<div class="st ${i<n?'done':i===n?'now':''}"><i>${i<n?'✓':i+1}</i><span>${t}</span></div>`).join('<b></b>');
+  if(log){ $('#progLog').innerHTML = (`<div>${esc(log)}</div>`+$('#progLog').innerHTML.replace(/class="on"/g,'')).replace('<div>','<div class="on">'); }
+}
+function progOutlineShow(o, photoN){
+  $('#progOutline').innerHTML = `<h3>${esc(o.titles[0])}</h3>${o.headings.map((h,i)=>`<div class="ol"><i>${i+1}</i>${esc(h.heading)}</div>`).join('')}
+    ${photoN?`<div class="olp">🖼️ 사진 ${photoN}장 준비</div>`:''}`;
+}
+function progClose(){ clearInterval(progT); $('#prog').classList.remove('on'); }
+function progStop(){ if(abortCtl) abortCtl.abort(); progClose(); toast('멈췄어요'); }
+function progFinish(){
+  clearInterval(progT);
+  $('#progRing').style.setProperty('--p',100); $('#progNum').innerHTML='✓'; $('#progLabel').textContent='완성'; $('#progRun').style.display='none'; $('#progDone').style.display='';
+  $('#progDoneTitle').textContent = cur.title;
+  const n=stockKeys().length; $('#progDoneInfo').textContent = `공백 포함 ${cur.chars||0}자${n?` · 사진 ${n}장`:''}${cur.photoN?` · 내 사진 자리 ${cur.photoN}곳`:''}`;
+}
+function progToResult(){ progClose(); setTimeout(()=>$('#result').scrollIntoView({behavior:'smooth'}),100); }
+function progAgain(){ progClose(); $('#result').style.display='none'; if(mode==='topic'){ $('#topicIn').value=''; } window.scrollTo(0,0); }
 
 async function generate(again){
   if(!needKey()) return;
@@ -541,48 +692,99 @@ async function generate(again){
   if(mode==='photo' && !PICS.photo.length) return toast('사진을 1장 이상 골라주세요');
   if(mode==='review' && !$('#rvName').value.trim()) return toast('업체·제품 이름을 적어주세요');
   const pics = mode==='photo'?PICS.photo:mode==='review'?PICS.review:[];
-  loading(true, pics.length?'사진을 보고 글을 쓰고 있어요…':'글을 쓰고 있어요…');
+  abortCtl = new AbortController();
+  progOpen();
   try{
-    const parts=[];
-    for(const p of pics) parts.push({inline_data:{mime_type:'image/jpeg',data:await toJpeg(p.file)}});
-    parts.push({text:userPrompt(pics.length)});
-    let data = await gemini(parts, POST_SCHEMA, systemPrompt());
-    // 체험단 최소 글자 수 미달이면 자동으로 한 번 더 길게
-    if(mode==='review'){
-      const min=+$('#rvMin').value||0;
-      if(min && countChars(data) < min){
-        loading(true,'글자 수가 모자라서 더 길게 다시 쓰고 있어요…');
-        parts[parts.length-1] = {text:userPrompt(pics.length)+`\n\n중요: 반드시 본문을 공백 포함 ${Math.round(min*1.3)}자 이상으로 길게 쓰세요. 소제목을 늘리고 각 소제목의 문장을 늘리세요.`};
-        data = await gemini(parts, POST_SCHEMA, systemPrompt());
-      }
-    }
+    // 1) 원고 - 뼈대
+    progStep(0,'글 뼈대 만드는 중',22, pics.length?'사진을 살펴보고 있어요':'글의 뼈대를 만들고 있어요');
+    const imgParts=[];
+    for(const p of pics) imgParts.push({inline_data:{mime_type:'image/jpeg',data:await toJpeg(p.file)}});
+    const base = taskPrompt(pics.length);
+    const o = await gemini([...imgParts,{text:base+OUTLINE_ASK}], OUTLINE_SCHEMA, systemPrompt());
+    if(!o.headings || !o.headings.length) throw new Error('뼈대를 만들지 못했어요. 다시 눌러주세요.');
+    const perSec = S.pexels && !pics.length ? S.perSec : 0;
+    progOutlineShow(o, perSec ? perSec*o.headings.length+1 : 0);
+    // 1) 원고 - 본문
+    progStep(0,'원고 쓰는 중',60,'뼈대에 맞춰 본문을 쓰고 있어요');
+    const photoPlace = pics.length ? `\n- 사진${1}~사진${pics.length}을 순서대로 한 번씩 [사진N] 문장 항목으로 알맞은 위치에 넣으세요.` : '';
+    let b = await gemini([...imgParts,{text:base+bodyAsk(o,photoPlace)}], BODY_SCHEMA, systemPrompt());
     const post = {
       id: Date.now().toString(36), date: Date.now(), mode, titleIdx:0, photoN:pics.length,
       input: mode==='topic'?{topic:$('#topicIn').value.trim()} : mode==='photo'?{what:$('#phWhat').value.trim(),memo:$('#phMemo').value.trim()}
         : {name:$('#rvName').value.trim(),kw:$('#rvKw').value.trim(),min:+$('#rvMin').value||0,photoMin:+$('#rvPhotoMin').value||0,link:$('#rvLink').value.trim()},
       disc: mode==='review'?$('#rvDisc').value.trim():'',
-      ...data
+      titles:o.titles, title:o.titles[0]||'제목 없음', keyword:o.keyword, coverQuery:o.coverQuery, tags:o.tags,
+      closingHeading:'마치며'
     };
-    post.title = (data.titles||[])[0] || '제목 없음';
+    const merge = b=>{ post.intro=b.intro||[]; post.closing=b.closing||[];
+      post.sections=o.headings.map((h,i)=>({heading:h.heading, photoQuery:h.photoQuery, sentences:((b.sections||[])[i]||{}).sentences||[]})); };
+    merge(b);
+    // 체험단 최소 글자 수 미달이면 자동으로 한 번 더 길게
+    if(mode==='review' && post.input.min && countChars(post) < post.input.min){
+      progStep(0,'원고 늘리는 중',68,'글자 수가 모자라서 더 길게 쓰고 있어요');
+      b = await gemini([...imgParts,{text:base+bodyAsk(o,photoPlace+`\n- 중요: 본문 전체를 공백 포함 ${Math.round(post.input.min*1.3)}자 이상으로 길게 쓰세요. 소제목마다 문장을 늘리세요.`)}], BODY_SCHEMA, systemPrompt());
+      merge(b);
+    }
+    // 2) 이미지
+    progStep(1,'이미지 준비',85, perSec?'글에 어울리는 사진을 고르고 있어요':(pics.length?'내 사진 자리를 표시하고 있어요':'사진 키가 없어서 사진은 건너뛰어요'));
+    if(perSec) await fetchStock(post, perSec);
+    // 3) 정리
+    progStep(2,'블로그 형식으로 정리 중',95,'소제목·구분선·글자 크기를 맞추고 있어요');
     post.html = buildHtml(post);
     cur = post; POSTS.unshift(post); if(POSTS.length>200) POSTS.length=200;
     autoKeyword(post);
     showResult(); persistCur();
-    toast('완성! 아래에서 확인하고 블로그에 올려보세요 👇');
-  }catch(e){ toast(e.message,5000); }
-  loading(false);
+    // 4) 완성
+    progStep(3,'완성',100,'글이 다 써졌어요');
+    progFinish();
+  }catch(e){
+    progClose();
+    if(e.name!=='AbortError' && !/멈/.test(e.message)) toast(e.message,5000);
+  }
+  abortCtl=null;
 }
 function countChars(d){ return [...(d.intro||[]),...(d.sections||[]).flatMap(s=>[s.heading,...s.sentences]),d.closingHeading,...(d.closing||[])].filter(x=>x && !/^\[사진\d+\]$/.test(x.trim())).join('').length; }
 
 /* ===== 결과 보여주기 ===== */
-const P = t=>`<p>${t}</p><p><br></p>`;
-const H = t=>`<p><b><span style="font-size:19px">${esc(t)}</span></b></p><p><br></p>`;
+const P = t=>`<p><span style="font-size:${S.bSize}px">${t}</span></p><p><br></p>`;
+const HR = `<hr style="border:0;border-top:2px dashed #cbd5e1;width:40%;margin:8px auto">`;
+const H = t=>`${HR}<blockquote style="border-left:4px solid #3b82f6;background:#eef3ff;margin:0;padding:12px 16px;border-radius:4px"><b><span style="font-size:${S.hSize}px">${esc(t)}</span></b></blockquote><p><br></p>`;
 const S1 = t=>{ const m=String(t).trim().match(/^\[사진(\d+)\]$/); return m?P(`<span class="ph">[사진${m[1]} 넣는 자리]</span>`):P(esc(t)); };
+/* ===== 무료 사진 (Pexels) ===== */
+async function pexelsSearch(q){
+  const r = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=12&orientation=landscape`,{headers:{Authorization:S.pexels}});
+  if(r.status===401||r.status===403) throw new Error('Pexels 키가 올바르지 않아요. 설정에서 다시 넣어주세요.');
+  if(!r.ok) return [];
+  const j = await r.json();
+  return (j.photos||[]).map(p=>({id:p.id,src:p.src.large,orig:p.src.large2x||p.src.original,alt:p.alt||q,by:p.photographer}));
+}
+async function fetchStock(p, per){
+  // 대표 1장 + 소제목마다 per장. 글 전체에서 같은 사진이 두 번 나오지 않게 고름
+  const used = new Set();
+  const groups = [{g:'cover',n:1,q:p.coverQuery}, ...(p.sections||[]).map((s,i)=>({g:String(i),n:per,q:s.photoQuery}))].filter(x=>x.q);
+  const lists = await Promise.all(groups.map(x=>pexelsSearch(x.q).catch(e=>{ if(/키가/.test(e.message)) toast(e.message,5000); return []; })));
+  p.stock = {};
+  groups.forEach((x,gi)=>{
+    const list = lists[gi]; let k=0;
+    for(let i=0;i<list.length && k<x.n;i++){
+      if(used.has(list[i].id)) continue;
+      used.add(list[i].id);
+      p.stock[x.g==='cover'?'cover':`${x.g}-${k}`] = {list, i};
+      k++;
+    }
+  });
+}
+function groupKeys(p,g){ return Object.keys(p.stock||{}).filter(k=>k.split('-')[0]===g).sort(); }
+const IMGS = (p,g)=>{ const ks=groupKeys(p,g); if(!ks.length) return '';
+  const w = ks.length===1?'100%':ks.length===2?'49%':'32.3%', hgt = ks.length===1?'':'aspect-ratio:1/1;';
+  return `<p>${ks.map(k=>{ const s=p.stock[k], ph=s.list[s.i];
+    return `<img src="${ph.src}" alt="${esc(ph.alt)}" data-slot="${k}" style="width:${w};${hgt}object-fit:cover;border-radius:8px;margin:0 .4% 0 0;vertical-align:top">`; }).join('')}</p><p><br></p>`; };
 function buildHtml(p){
   let h='';
   if(p.disc) h+=P(`<span style="color:#888">${esc(p.disc)}</span>`);
+  h+=IMGS(p,'cover');
   (p.intro||[]).forEach(t=>h+=S1(t));
-  (p.sections||[]).forEach(s=>{ h+=H(s.heading); s.sentences.forEach(t=>h+=S1(t)); });
+  (p.sections||[]).forEach((s,i)=>{ h+=H(s.heading); h+=IMGS(p,String(i)); s.sentences.forEach(t=>h+=S1(t)); });
   if(p.closingHeading) h+=H(p.closingHeading);
   (p.closing||[]).forEach(t=>h+=S1(t));
   if(p.input && p.input.link) h+=P('📍 '+esc(p.input.link));
@@ -594,8 +796,55 @@ function showResult(){
   $('#titleChips').innerHTML = (p.titles||[]).map((t,i)=>`<button class="chip sug ${i===p.titleIdx?'on':''}" onclick="pickTitle(${i})">${esc(t)}</button>`).join('');
   $('#titleIn').value = p.title;
   $('#paper').innerHTML = p.html;
+  renderStrip();
   updateChecks();
-  setTimeout(()=>$('#result').scrollIntoView({behavior:'smooth'}),100);
+  if(!$('#prog').classList.contains('on')) setTimeout(()=>$('#result').scrollIntoView({behavior:'smooth'}),100);
+}
+function stockKeys(){ const k=Object.keys(cur.stock||{}); return [...k.filter(x=>x==='cover'), ...k.filter(x=>x!=='cover').sort((a,b)=>{ const [a1,a2]=a.split('-').map(Number),[b1,b2]=b.split('-').map(Number); return a1-b1||a2-b2; })]; }
+function slotName(k){ if(k==='cover') return '대표 사진'; const [g,n]=k.split('-').map(Number); return (cur.sections[g]?cur.sections[g].heading:'')+' '+(n+1); }
+function renderStrip(){
+  const st=cur.stock||{}, keys=stockKeys();
+  if(!keys.length){
+    $('#photoBox').style.display = cur.photoN ? 'none' : 'block';
+    $('#photoStrip').innerHTML = `<div class="hint" style="margin:0">${S.pexels?'이번 글에는 어울리는 사진을 찾지 못했어요. "다시 쓰기"를 눌러보세요.':'설정에서 <b>Pexels 무료 사진 키</b>를 넣으면 글 내용에 맞는 사진이 자동으로 들어가요.'}</div>`;
+    $('#saveAllBtn').style.display='none'; return;
+  }
+  $('#photoBox').style.display='block'; $('#saveAllBtn').style.display=''; prefetchStock();
+  const groups = ['cover', ...(cur.sections||[]).map((s,i)=>String(i))].filter(g=>groupKeys(cur,g).length);
+  $('#photoStrip').innerHTML = groups.map(g=>`<div class="pg"><b>${g==='cover'?'대표 사진':esc(cur.sections[+g].heading)}</b><div class="pgr">${
+    groupKeys(cur,g).map(k=>{ const ph=st[k].list[st[k].i]; return `<button onclick="swapPhoto('${k}')"><img src="${ph.src}"><span>🔄</span></button>`; }).join('')}</div></div>`).join('');
+}
+function swapPhoto(k){
+  const s=cur.stock[k];
+  const taken=new Set(stockKeys().filter(x=>x!==k).map(x=>cur.stock[x].list[cur.stock[x].i].id));
+  for(let n=0;n<s.list.length;n++){ s.i=(s.i+1)%s.list.length; if(!taken.has(s.list[s.i].id)) break; }
+  const ph=s.list[s.i];
+  const img=$('#paper').querySelector(`img[data-slot="${k}"]`);
+  if(img){ img.src=ph.src; img.alt=ph.alt; } else { cur.html=buildHtml(cur); $('#paper').innerHTML=cur.html; }
+  cur.html=$('#paper').innerHTML; renderStrip(); persistCur();
+}
+// 아이폰은 버튼을 누른 직후에만 공유 창을 열 수 있어서, 사진을 미리 받아 둔다
+const BLOBS = {};
+function getBlob(u){ if(!BLOBS[u]) BLOBS[u]=fetch(u).then(r=>r.blob()).catch(e=>{ delete BLOBS[u]; throw e; }); return BLOBS[u]; }
+function prefetchStock(){ Object.values(cur.stock||{}).forEach(s=>getBlob(s.list[s.i].orig).catch(()=>{})); }
+async function savePhotos(keys){
+  keys = keys || stockKeys();
+  toast('사진을 받는 중이에요…',8000);
+  try{
+    const files = [];
+    for(const [n,k] of keys.entries()){
+      const ph=cur.stock[k].list[cur.stock[k].i];
+      const b = await getBlob(ph.orig);
+      files.push(new File([b], `${String(n+1).padStart(2,'0')}_${slotName(k).replace(/[\\/:*?"<>|]/g,'').slice(0,20)}.jpg`, {type:'image/jpeg'}));
+    }
+    if(isMobile && navigator.canShare && navigator.canShare({files})){
+      await navigator.share({files});
+      toast('공유 창에서 "이미지 저장"을 누르면 사진 앱에 저장돼요',5000);
+    } else {
+      for(const f of files){ const a=document.createElement('a'); a.href=URL.createObjectURL(f); a.download=f.name; a.click(); await new Promise(r=>setTimeout(r,400)); }
+      toast(`사진 ${files.length}장을 다운로드 폴더에 저장했어요. 파일 이름 앞 번호가 글 속 순서예요.`,5000);
+    }
+  }catch(e){ if(e.name!=='AbortError') toast('사진 저장에 실패했어요. 사진을 길게 눌러 저장해 주세요.',5000); }
 }
 function pickTitle(i){ cur.titleIdx=i; cur.title=cur.titles[i]; showResult(); persistCur(); }
 $('#titleIn').addEventListener('input',()=>{ if(!cur) return; cur.title=$('#titleIn').value; persistCur(); });
@@ -657,7 +906,8 @@ function step1(){
 }
 async function step2(){
   const ok=await copyRich(cleanHtml(), bodyText());
-  toast(ok?(isMobile?'본문 복사됨! 네이버 본문 칸을 길게 눌러 붙여넣기 하세요':'본문 복사됨! 네이버 본문 칸을 클릭하고 Ctrl+V 하세요'):'복사에 실패했어요. 흰 종이 안을 길게 눌러 전체 선택 후 복사해 주세요.',5000);
+  const tip = Object.keys(cur.stock||{}).length ? '<br><small>사진이 같이 안 붙으면 "💾 모두 저장" 후 그 자리에 넣어주세요</small>' : '';
+  toast(ok?(isMobile?'본문 복사됨! 네이버 본문 칸을 길게 눌러 붙여넣기 하세요':'본문 복사됨! 네이버 본문 칸을 클릭하고 Ctrl+V 하세요')+tip:'복사에 실패했어요. 흰 종이 안을 길게 눌러 전체 선택 후 복사해 주세요.',5000);
 }
 async function copyAllText(){
   const ok=await copyRich(null,$('#titleIn').value.trim()+'\n\n'+bodyText());
@@ -707,10 +957,15 @@ function delPost(id){ if(!confirm('이 글을 보관함에서 지울까요?')) r
 
 /* ===== 설정 ===== */
 function renderSettings(){
-  $('#sKey').value=S.key; $('#sName').value=S.name; $('#sBlog').value=S.blogId; $('#sStyle').value=S.style; $('#sSample').value=S.sample; $('#ver').textContent=VERSION;
+  $('#sKey').value=S.key; $('#sPexels').value=S.pexels||''; $('#sName').value=S.name; $('#sBlog').value=S.blogId; $('#sStyle').value=S.style; $('#sSample').value=S.sample; $('#ver').textContent=VERSION;
   $('#modelInfo').textContent = S.lastModel?('마지막으로 사용한 AI: '+S.lastModel):'';
 }
-function readSettings(){ S.key=$('#sKey').value.trim(); S.name=$('#sName').value.trim(); S.blogId=$('#sBlog').value.trim(); S.style=$('#sStyle').value.trim()||DEFAULT_STYLE; S.sample=$('#sSample').value; }
+async function testPexels(){
+  readSettings(); saveS(); if(!S.pexels) return toast('Pexels 키를 붙여넣어 주세요');
+  try{ const l=await pexelsSearch('coffee'); toast(l.length?'✅ 사진 연결 성공! 이제 글마다 사진이 자동으로 들어가요':'연결은 됐는데 사진을 못 찾았어요. 잠시 후 다시 해보세요.',4500); }
+  catch(e){ toast(e.message.includes('키')?e.message:'인터넷 연결을 확인해 주세요',5000); }
+}
+function readSettings(){ S.key=$('#sKey').value.trim(); S.pexels=$('#sPexels').value.trim();S.name=$('#sName').value.trim(); S.blogId=$('#sBlog').value.trim(); S.style=$('#sStyle').value.trim()||DEFAULT_STYLE; S.sample=$('#sSample').value; }
 function saveSettings(){ readSettings(); saveS(); toast('저장했어요'); }
 function toggleKey(){ const i=$('#sKey'); i.type=i.type==='password'?'text':'password'; }
 async function testKey(){
@@ -722,7 +977,7 @@ async function testKey(){
   loading(false);
 }
 function exportData(){
-  const blob=new Blob([JSON.stringify({v:1,settings:{...S,key:''},posts:POSTS,keywords:KWS,topics:TOPICS},null,1)],{type:'application/json'});
+  const blob=new Blob([JSON.stringify({v:1,settings:{...S,key:'',pexels:''},posts:POSTS,keywords:KWS,topics:TOPICS},null,1)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='블로그도우미-백업-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
 }
 function importData(inp){
@@ -730,7 +985,7 @@ function importData(inp){
   r.onload=()=>{ try{ const d=JSON.parse(r.result);
     const ids=new Set(POSTS.map(p=>p.id)); POSTS=[...POSTS,...(d.posts||[]).filter(p=>!ids.has(p.id))].sort((a,b)=>b.date-a.date); saveP();
     (d.keywords||[]).forEach(k=>{ if(!KWS.find(x=>x.kw===k.kw)) KWS.push(k); }); saveK();
-    if(d.settings){ const key=S.key; S={...S,...d.settings,key}; saveS(); }
+    if(d.settings){ const key=S.key, pexels=S.pexels; S={...S,...d.settings,key,pexels}; saveS(); }
     toast('불러왔어요'); renderSettings();
   }catch(e){ toast('백업 파일이 올바르지 않아요'); } };
   r.readAsText(f);
