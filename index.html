@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="app-version" content="3">
+<meta name="app-version" content="4">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -119,6 +119,13 @@ textarea.in{min-height:96px;resize:vertical;line-height:1.5}
 .ol i{font-style:normal;width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#2dd4bf,#4f7cff);display:grid;place-items:center;font-size:13px;font-weight:700;flex:none}
 .olp{color:#5eead4;margin-top:10px;font-weight:600}
 .plog div{color:var(--sub);padding:4px 0}.plog div.on{color:#fff}.plog div.on::before{content:"● ";color:#2dd4bf}
+.pbar{height:8px;border-radius:8px;background:#1e2a44;overflow:hidden;margin:6px 0 16px}
+.pbar div{height:100%;background:linear-gradient(90deg,#2dd4bf,#4f7cff);width:0;transition:width .3s}
+.ptip{font-size:14px;line-height:1.6;color:#c7d2fe}
+#pasteCard .kind{display:inline-block;font-size:13px;font-weight:700;padding:3px 10px;border-radius:999px;background:#13304a;color:#5eead4;margin-bottom:10px}
+#pasteCard .txt{background:#fff;color:#222;border-radius:12px;padding:14px;max-height:220px;overflow:auto;font-size:14px;line-height:1.6}
+#pasteCard .txt p{margin:0}
+#pasteCard img{width:100%;border-radius:12px;display:block}
 .ps{display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:8px}
 .ps img{width:96px;height:68px;object-fit:cover;border-radius:10px;flex:none}
 .ps b{display:block;font-size:14px;line-height:1.35}.ps small{color:var(--sub);font-size:12px}
@@ -254,8 +261,12 @@ a{color:#7aa2ff}
     </div>
     <div class="sec">블로그에 올리기</div>
     <div class="steps">
-      <button class="btn p" onclick="step1()">① 제목 복사 + 네이버 글쓰기 열기<small>열린 창의 제목 칸을 누르고 붙여넣기 하세요</small></button>
-      <button class="btn p" onclick="step2()">② 본문 복사<small>본문 칸을 누르고 붙여넣기 하세요. 소제목 굵게, 태그까지 들어가요</small></button>
+      <button class="btn p" onclick="pasteOpen()">📋 붙여넣기 도우미 (글 + 사진, 추천)<small>글과 사진을 순서대로 한 조각씩 복사해 줘요. 붙여넣기만 반복하면 끝</small></button>
+      <div class="hint" style="margin:4px 0 0">사진 없이 글만 빠르게 넣으려면 ↓</div>
+      <div class="row2">
+        <button class="btn" onclick="step1()">① 제목 복사 + 글쓰기 열기</button>
+        <button class="btn" onclick="step2()">② 본문(글만) 복사</button>
+      </div>
       <div class="row2">
         <button class="btn" onclick="generate(true)">🔄 다시 쓰기</button>
         <button class="btn" onclick="copyAllText()">📋 전체 텍스트 복사</button>
@@ -341,12 +352,26 @@ a{color:#7aa2ff}
       <h2 style="color:#5eead4;font-size:30px;margin:6px 0 14px">글 완성!</h2>
       <div class="pcard" style="text-align:left"><b id="progDoneTitle"></b><div class="hint" id="progDoneInfo"></div></div>
       <div class="steps" style="text-align:left">
-        <button class="btn p" onclick="step1()">① 제목 복사 + 네이버 글쓰기 열기<small>제목 칸에 붙여넣기 → 이 앱으로 돌아와 ②번</small></button>
-        <button class="btn p" onclick="step2()">② 본문 복사<small>본문 칸에 붙여넣기 → 임시저장 또는 발행</small></button>
+        <button class="btn p" onclick="progClose();pasteOpen()">📋 블로그에 넣기 (붙여넣기 도우미)<small>글과 사진을 순서대로 복사해 줘요 → 네이버에 붙여넣기만 반복</small></button>
         <button class="btn" onclick="progToResult()">✏️ 글 확인·수정하기 / 사진 바꾸기</button>
         <button class="btn" onclick="progAgain()">＋ 하나 더 쓰기</button>
       </div>
     </div>
+  </div>
+</div>
+<div class="prog" id="paste">
+  <div class="ptop"><button onclick="pasteClose()">✕</button><b>붙여넣기 도우미</b><span id="pasteCnt"></span></div>
+  <div class="pbody">
+    <div class="pbar"><div id="pasteBar"></div></div>
+    <div class="pcard ptip" id="pasteTip"></div>
+    <div class="pcard" id="pasteCard"></div>
+    <button class="big" id="pasteBtn" style="margin-top:6px" onclick="pasteCopy()"></button>
+    <div id="pasteSave" style="display:none;margin-top:10px"><button class="btn" style="width:100%" onclick="pasteSaveImg()">💾 붙여넣기가 안 되면: 이 사진 저장해서 넣기</button></div>
+    <div class="row2" style="margin-top:12px">
+      <button class="btn" onclick="pasteGo(-1)">◀ 이전</button>
+      <button class="btn" onclick="pasteGo(1)">다음 ▶</button>
+    </div>
+    <label class="hint" style="display:flex;gap:8px;align-items:center;margin-top:16px"><input type="checkbox" id="pasteMerge" checked onchange="pasteBuild(true)"> 소제목마다 사진 여러 장을 한 장으로 합치기 (붙여넣는 횟수가 줄어요)</label>
   </div>
 </div>
 <div class="load" id="load"><div class="spin"></div><b id="loadMsg">글을 쓰고 있어요…</b><small style="color:var(--sub)" id="loadSec"></small></div>
@@ -912,6 +937,86 @@ async function step2(){
 async function copyAllText(){
   const ok=await copyRich(null,$('#titleIn').value.trim()+'\n\n'+bodyText());
   toast(ok?'제목+본문 텍스트를 복사했어요':'복사에 실패했어요');
+}
+
+/* ===== 붙여넣기 도우미: 글·사진을 순서대로 한 조각씩 복사 ===== */
+const PST = {chunks:[], i:0, pending:false};
+function pasteOpen(){ if(!cur) return toast('먼저 글을 만들어 주세요'); pasteBuild(); $('#paste').classList.add('on'); }
+function pasteClose(){ $('#paste').classList.remove('on'); PST.pending=false; }
+function cleanChunk(html){ const d=document.createElement('div'); d.innerHTML=html; d.querySelectorAll('.ph').forEach(s=>{ s.removeAttribute('class'); s.style.color='#999'; }); return d.innerHTML; }
+function pasteBuild(keep){
+  const merge=$('#pasteMerge').checked, ch=[{type:'title'}]; let buf=[], label='대표 사진';
+  const flush=()=>{ if(!buf.length) return; const html=buf.join(''); buf=[]; const d=document.createElement('div'); d.innerHTML=html;
+    const text=[...d.children].map(e=>e.textContent.trim()).filter(Boolean).join('\n\n');
+    if(text) ch.push({type:'text', html:cleanChunk(html), text}); };
+  [...$('#paper').children].forEach(n=>{
+    if(n.tagName==='BLOCKQUOTE') label=n.textContent.trim();
+    const imgs=[...n.querySelectorAll('img')];
+    if(!imgs.length){ buf.push(n.outerHTML); return; }
+    flush();
+    const srcs=imgs.map(i=>i.src);
+    if(merge || srcs.length===1) ch.push({type:'img', srcs, label});
+    else srcs.forEach((s,k)=>ch.push({type:'img', srcs:[s], label:label+' '+(k+1)}));
+  });
+  flush(); ch.push({type:'end'});
+  PST.chunks=ch; PST.i = keep ? Math.min(PST.i, ch.length-1) : 0; PST.pending=false;
+  ch.filter(c=>c.type==='img').forEach(c=>imgBlob(c).catch(()=>{}));   // 사진은 미리 만들어 둔다 (아이폰은 누른 순간에 바로 복사해야 해서)
+  pasteRender();
+}
+function loadImg(blob){ return new Promise((res,rej)=>{ const u=URL.createObjectURL(blob), im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=u; }); }
+function imgBlob(c){
+  if(!c.blob) c.blob = (async()=>{
+    const ims = await Promise.all(c.srcs.map(async s=>loadImg(await getBlob(s))));
+    const cv=document.createElement('canvas'), x=cv.getContext('2d'), n=ims.length;
+    if(n===1){ const im=ims[0], sc=Math.min(1,1200/im.naturalWidth); cv.width=Math.round(im.naturalWidth*sc); cv.height=Math.round(im.naturalHeight*sc); x.drawImage(im,0,0,cv.width,cv.height); }
+    else { // 여러 장을 가로로 나란히 (정사각형 칸, 가운데 잘라내기)
+      const W=1500, gap=12, cell=Math.floor((W-gap*(n-1))/n); cv.width=W; cv.height=cell; x.fillStyle='#fff'; x.fillRect(0,0,W,cell);
+      ims.forEach((im,i)=>{ const s=Math.min(im.naturalWidth,im.naturalHeight); x.drawImage(im,(im.naturalWidth-s)/2,(im.naturalHeight-s)/2,s,s,i*(cell+gap),0,cell,cell); });
+    }
+    return await new Promise(r=>cv.toBlob(r,'image/png'));
+  })().catch(e=>{ c.blob=null; throw e; });
+  return c.blob;
+}
+function pasteRender(){
+  const c=PST.chunks[PST.i], total=PST.chunks.length-1;
+  $('#pasteCnt').textContent = c.type==='end' ? '완료' : `${PST.i+1} / ${total}`;
+  $('#pasteBar').style.width = (PST.i/total*100)+'%';
+  $('#pasteTip').innerHTML = isMobile
+    ? '<b>복사하기</b> → 네이버 블로그 앱에서 넣을 자리를 <b>길게 눌러 붙여넣기</b> → 이 앱으로 돌아오면 <b>자동으로 다음 조각</b>이 나와요.'
+    : '<b>복사하기</b> → 네이버 창에서 넣을 자리를 클릭하고 <b>Ctrl+V</b> → 이 창으로 돌아오면 <b>자동으로 다음 조각</b>이 나와요.';
+  const kind = t=>`<span class="kind">${t}</span>`;
+  let card='', btn='';
+  if(c.type==='title'){ card=kind('제목')+`<div class="txt"><b>${esc($('#titleIn').value)}</b></div>`; btn='📋 제목 복사 + 네이버 글쓰기 열기'; }
+  if(c.type==='text'){ card=kind('글')+`<div class="txt">${c.html}</div>`; btn='📋 이 글 복사하기'; }
+  if(c.type==='img'){ card=kind('사진 · '+esc(c.label))+(c.srcs.length>1?`<div class="pgr">${c.srcs.map(s=>`<button><img src="${s}"></button>`).join('')}</div>`:`<img src="${c.srcs[0]}">`); btn='🖼️ 이 사진 복사하기'; }
+  if(c.type==='end'){ card=`<div style="text-align:center;padding:10px"><div style="font-size:44px">✅</div><b style="font-size:20px">모두 넣었어요!</b><div class="hint">네이버에서 <b>임시저장</b>을 누르고, 한 번 읽어본 뒤 발행하세요.</div></div>`; btn='닫기'; }
+  $('#pasteCard').innerHTML=card; $('#pasteBtn').textContent=btn;
+  $('#pasteSave').style.display = c.type==='img' ? '' : 'none';
+}
+async function copyImg(c){
+  try{ await navigator.clipboard.write([new ClipboardItem({'image/png': imgBlob(c)})]); return true; }
+  catch(e){ try{ const b=await imgBlob(c); await navigator.clipboard.write([new ClipboardItem({'image/png':b})]); return true; }catch(e2){ return false; } }
+}
+async function pasteCopy(){
+  const c=PST.chunks[PST.i]; let ok=false;
+  if(c.type==='end') return pasteClose();
+  if(c.type==='title'){ const t=$('#titleIn').value.trim(); ok=copySync(null,t); window.open(writeUrl(),'_blank'); if(!ok) ok=await copyRich(null,t); }
+  if(c.type==='text') ok = await copyRich(c.html, c.text);
+  if(c.type==='img') ok = await copyImg(c);
+  if(ok){ PST.pending=true; $('#pasteBtn').textContent='✔ 복사됨! 네이버에 붙여넣고 돌아오세요'; }
+  else toast(c.type==='img'?'사진 복사가 안 되는 환경이에요. 아래 "이 사진 저장해서 넣기"를 눌러주세요.':'복사에 실패했어요. 다시 눌러주세요.',4500);
+}
+function pasteGo(d){ PST.i=Math.max(0,Math.min(PST.chunks.length-1,PST.i+d)); PST.pending=false; pasteRender(); window.scrollTo(0,0); $('#paste').scrollTop=0; }
+function pasteBack(){ if(document.visibilityState!=='visible' || !PST.pending || !$('#paste').classList.contains('on')) return; PST.pending=false; setTimeout(()=>pasteGo(1),150); }
+document.addEventListener('visibilitychange',pasteBack); window.addEventListener('focus',pasteBack);
+async function pasteSaveImg(){
+  const c=PST.chunks[PST.i];
+  try{
+    const f=new File([await imgBlob(c)], `${String(PST.i+1).padStart(2,'0')}_${c.label.replace(/[\\/:*?"<>|]/g,'').slice(0,20)}.png`, {type:'image/png'});
+    if(isMobile && navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f]}); toast('"이미지 저장" → 네이버에서 사진 버튼으로 방금 저장한 사진을 넣으세요',5000); }
+    else { const a=document.createElement('a'); a.href=URL.createObjectURL(f); a.download=f.name; a.click(); toast('다운로드 폴더에 저장했어요. 네이버에서 사진 버튼으로 넣으세요',5000); }
+    PST.pending=true;
+  }catch(e){ if(e.name!=='AbortError') toast('사진을 만들지 못했어요. 사진을 길게 눌러 저장해 주세요.',5000); }
 }
 
 /* ===== 순위 ===== */
